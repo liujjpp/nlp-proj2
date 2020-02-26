@@ -174,5 +174,32 @@ PASTA_TYPES = [
 def transform_to_thai(recipe_data):
     input_ingredients = list(map(lambda i: i['name'], recipe_data['ingredients']))
     is_pasta_rice_soup = False
+    
+    # add sauces - coconut milk / fish sauce if dish is rice, a pasta, or soup
+    for ig in input_ingredients:
+        if any(map(lambda pasta_type: pasta_type in ig, PASTA_TYPES)):
+            is_pasta_rice_soup = True
+            
+    if 'soup' in input_ingredients or 'rice' in input_ingredients:
+        is_pasta_rice_soup = True
+    
             
     return is_pasta_rice_soup
+    
+if __name__ == '__main__':
+    # run tests
+    sample_recipe = {'ingredients': [
+        {'name': 'whole wheat lasagna noodles', 'quantity': 12, 'measurement': None, 'descriptor': None, 'preparation': None},
+        {'name': 'ground beef', 'quantity': 1, 'measurement': 'pound', 'descriptor': 'lean', 'preparation': None},
+        {'name': 'garlic', 'quantity': 2, 'measurement': 'cloves', 'descriptor': None, 'preparation': 'chopped'},
+        {'name': 'garlic powder', 'quantity': 0.5, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None},
+        {'name': 'oregano', 'quantity': 1, 'measurement': 'teaspoon or to taste', 'descriptor': 'dried', 'preparation': None},
+        {'name': 'salt and ground black pepper', 'quantity': None, 'measurement': 'to taste', 'descriptor': None, 'preparation': None},
+        {'name': 'cottage cheese', 'quantity': 1, 'measurement': '(16 ounce) package', 'descriptor': None, 'preparation': None},
+        {'name': 'eggs', 'quantity': 2, 'measurement': None, 'descriptor': None, 'preparation': None},
+        {'name': 'Parmesan cheese', 'quantity': 0.5, 'measurement': 'cup', 'descriptor': None, 'preparation': 'shredded'},
+        {'name': 'tomato-basil pasta sauce', 'quantity': 1.5, 'measurement': '(25 ounce) jars', 'descriptor': None, 'preparation': None},
+        {'name': 'mozzarella cheese', 'quantity': 2, 'measurement': 'cups', 'descriptor': None, 'preparation': 'shredded'}]
+    }
+    
+    print(transform_to_thai(sample_recipe))
