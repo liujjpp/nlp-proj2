@@ -1,5 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
+from pprint import pprint
+
+from transforms import to_thai_cuisine
 
 class RecipeFetcher:
 
@@ -68,8 +71,11 @@ class RecipeFetcher:
 
         return results
 
-
 if __name__ == '__main__':
   rf = RecipeFetcher()
   meat_lasagna = rf.search_recipes('meat lasagna')[0]
-  print(rf.scrape_recipe(meat_lasagna))
+  recipe_data = rf.scrape_recipe(meat_lasagna)
+  
+  print(recipe_data)
+  
+  # pprint(to_thai_cuisine.transform_to_thai(recipe_data))
