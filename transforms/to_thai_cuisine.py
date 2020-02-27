@@ -1,5 +1,6 @@
 THAI_INDICATORS = ['coconut milk', 'fish sauce', 'chili pepper', 'galangal', 'curry']
 # all found pasta types on https://en.wikipedia.org/wiki/List_of_pasta
+THAI_SPICES = ['lemongrass', 'basil']
 PASTA_TYPES = [
     'barbine',
     'bavette',
@@ -175,6 +176,9 @@ def transform_to_thai(recipe_data):
     input_ingredients = list(map(lambda i: i['name'], recipe_data['ingredients']))
     is_pasta_rice_soup = False
     
+    # add thai peppers for all recipes
+    recipe_data['ingredients'].append({'name': 'chili pepper', 'quantity': 0.25, 'measurement': 'cup', 'descriptor': None, 'preparation': None})
+    
     # add sauces - coconut milk / fish sauce if dish is rice, a pasta, or soup
     for ig in input_ingredients:
         if any(map(lambda pasta_type: pasta_type in ig, PASTA_TYPES)):
@@ -183,8 +187,34 @@ def transform_to_thai(recipe_data):
     if 'soup' in input_ingredients or 'rice' in input_ingredients:
         is_pasta_rice_soup = True
     
+    if is_pasta_rice_soup:
+        print('this is pasta rice soup')
+        # add in coconut milk / fish sauce
+        recipe_data['ingredients'].append({'name': 'coconut milk', 'quantity': 6, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
+        recipe_data['ingredients'].append({'name': 'fish sauce', 'quantity': 2.5, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
+    
+    # check if thai spices in
+    for spice in THAI_SPICES:
+        # add if in not ingredients
+        if spice not in input_ingredients:
+            recipe_data['ingredients'].append({'name': spice, 'quantity': None, 'measurement': None, 'descriptor': None, 'preparation': None})
             
-    return is_pasta_rice_soup
+    # edit steps in recipe to account for thai transform
+    directions_text = list(map(lambda s: s['text'], recipe_data['directions']))
+    
+    cook_actions = ['blend', 'mix', 'stir']
+    for i in range(len(directions_text)):
+        # check if step involves any blend, mix, or stir to add in thai essentials
+        if any(map(lambda action: action in directions_text[i], cook_actions)):
+            print('cooking occurs', directions_text[i])
+            if is_pasta_rice_soup:
+                # add in coconut milk / fish sauce step
+                pass
+            else:
+                # just add thai peppers in
+                pass
+            
+    return recipe_data
     
 if __name__ == '__main__':
     # run tests
@@ -199,7 +229,20 @@ if __name__ == '__main__':
         {'name': 'eggs', 'quantity': 2, 'measurement': None, 'descriptor': None, 'preparation': None},
         {'name': 'Parmesan cheese', 'quantity': 0.5, 'measurement': 'cup', 'descriptor': None, 'preparation': 'shredded'},
         {'name': 'tomato-basil pasta sauce', 'quantity': 1.5, 'measurement': '(25 ounce) jars', 'descriptor': None, 'preparation': None},
-        {'name': 'mozzarella cheese', 'quantity': 2, 'measurement': 'cups', 'descriptor': None, 'preparation': 'shredded'}]
+        {'name': 'mozzarella cheese', 'quantity': 2, 'measurement': 'cups', 'descriptor': None, 'preparation': 'shredded'}],
+    'directions': [
+        {'text': 'Preheat oven to 350 degrees F (175 degrees C).', 
+        'ingredients': [], 'tools': ['oven'], 'methods': [], 'times': []},
+        {'text': 'Fill a large pot with lightly salted water and bring to a rolling boil over high heat. Once the water is boiling, add the lasagna noodles a few at a time, and return to a boil. Cook the pasta uncovered, stirring occasionally, until the pasta has cooked through, but is still firm to the bite, about 10 minutes. Remove the noodles to a plate.', 
+        'ingredients': ['lasagna noodles', 'pasta', 'noodles'], 'tools': ['pot', 'plate'], 'methods': ['stirring'], 'times': ['10 minutes']},
+        {'text': 'Place the ground beef into a skillet over medium heat, add the garlic, garlic powder, oregano, salt, and black pepper to the skillet. Cook the meat, chopping it into small chunks as it cooks, until no longer pink, about 10 minutes. Drain excess grease.', 
+        'ingredients': ['ground beef', 'garlic', 'garlic powder', 'oregano', 'salt', 'black pepper', 'meat'], 'tools': ['skillet'], 'methods': ['chopping'], 'times': ['10 minutes']},
+        {'text': 'In a bowl, mix the cottage cheese, eggs, and Parmesan cheese until thoroughly combined.', 
+        'ingredients': ['cottage cheese', 'eggs', 'Parmesan cheese'], 'tools': ['bowl'], 'methods': ['mix'], 'times': []},
+        {'text': 'Place 4 noodles side by side into the bottom of a 9x13-inch baking pan; top with a layer of the tomato-basil sauce, a layer of ground beef mixture, and a layer of the cottage cheese mixture. Repeat layers twice more, ending with a layer of sauce; sprinkle top with the mozzarella cheese. Cover the dish with aluminum foil.', 
+        'ingredients': ['noodles', 'tomato-basil sauce', 'ground beef', 'cottage cheese', 'sauce', 'mozzarella cheese'], 'tools': ['baking pan', 'aluminum foil'], 'methods': ['sprinkle'], 'times': []},
+        {'text': 'Bake in the preheated oven until the casserole is bubbling and the cheese has melted, about 30 minutes. Remove foil and bake until cheese has begun to brown, about 10 more minutes. Allow to stand at least 10 minutes before serving.', 
+        'ingredients': ['cheese'], 'tools': ['oven', 'foil'], 'methods': ['Bake', 'bake'], 'times': ['30 minutes', '10 more minutes', '10 minutes']}],
     }
     
     print(transform_to_thai(sample_recipe))
