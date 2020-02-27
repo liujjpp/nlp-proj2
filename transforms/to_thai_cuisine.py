@@ -199,6 +199,21 @@ def transform_to_thai(recipe_data):
         if spice not in input_ingredients:
             recipe_data['ingredients'].append({'name': spice, 'quantity': None, 'measurement': None, 'descriptor': None, 'preparation': None})
             
+    # edit steps in recipe to account for thai transform
+    directions_text = list(map(lambda s: s['text'], recipe_data['directions']))
+    
+    cook_actions = ['blend', 'mix', 'stir']
+    for i in range(len(directions_text)):
+        # check if step involves any blend, mix, or stir to add in thai essentials
+        if any(map(lambda action: action in directions_text[i], cook_actions)):
+            print('cooking occurs', directions_text[i])
+            if is_pasta_rice_soup:
+                # add in coconut milk / fish sauce step
+                pass
+            else:
+                # just add thai peppers in
+                pass
+            
     return recipe_data
     
 if __name__ == '__main__':
