@@ -6,7 +6,8 @@ def parse_recipe(recipe):
 
     results['ingredients'] = parse_ingredients(recipe['ingredients'])
 
-    results['directions'] = parse_directions(recipe['directions'])
+    ingredients_names = [ingredient['name'] for ingredient in results['ingredients']]
+    results['directions'] = parse_directions(recipe['directions'], ingredients_names)
 
     results['nutrition'] = recipe['nutrition']
 
@@ -108,13 +109,78 @@ def parse_ingredients(ingredients):
     
     return results
 
-def parse_directions(directions):
+def parse_directions(directions, ingredients_names):
     knowledge = {}
     with open('./directions_knowledge.json', 'r') as f:
         for line in f.readlines():
             knowledge = json.loads(line)
 
     results = []
+
+    for direction in directions:
+        direction_info = {}
+        direction = direction.replace('Watch Now', '')
+        direction_info['text'] = ' '.join(direction.split())
+        text = direction_info['text']
+        words = text.replace(',', '').replace('.', '').split()
+
+        ingredients = []
+        for i in knowledge['ingredients']:
+            if i in words:
+                ingredients.append(i)
+        for name in ingredients_names:
+            if not ' ' in name:
+                if name in words:
+                    ingredients.append(name)
+            elif not 'and' in name:
+                name_words = name.split()
+                for i in range(len(name_words), 0, -1):
+                    subname = ' '.join(name_words[-i:])
+                    if subname in text:
+                        ingredients.append(subname)
+                        break
+            else:
+                name_words = name.split()
+                idx = name_words.index('and')
+                name_words1 = name_words[:idx]
+                name_words2 = name_words[idx + 1:]
+                for i in range(len(name_words1), 0, -1):
+                    subname = ' '.join(name_words1[-i:])
+                    if subname in text:
+                        ingredients.append(subname)
+                        break
+                for i in range(len(name_words2), 0, -1):
+                    subname = ' '.join(name_words2[-i:])
+                    if subname in text:
+                        ingredients.append(subname)
+                        break
+        ingredients = list(set(ingredients))
+        direction_info['ingredients'] = ingredients
+
+        tools = []
+        for t in knowledge['tools']:
+            if t in text:
+                tools.append(t)
+        direction_info['tools'] = tools
+
+        methods = []
+        for w in words:
+            if w.lower() in knowledge['methods']:
+                methods.append(w)
+        direction_info['methods'] = methods
+
+        times = []
+        for i in range(len(words)):
+            if words[i] in knowledge['times']:
+                time = words[i]
+                for j in range(i - 1, -1, -1):
+                    time = words[j] + ' ' + time
+                    if 47 < ord(words[j][0]) < 58:
+                        break
+                times.append(time)
+        direction_info['times'] = times
+
+        results.append(direction_info)
 
     return results
 
@@ -159,3 +225,4 @@ if __name__ == '__main__':
     }
 
     # print(parse_ingredients(example['ingredients']))
+    # print(parse_recipe(example))
