@@ -1,4 +1,4 @@
-from random import random
+import random
 
 THAI_INDICATORS = ['coconut milk', 'fish sauce', 'chili pepper', 'galangal', 'curry']
 # all found pasta types on https://en.wikipedia.org/wiki/List_of_pasta
@@ -195,12 +195,6 @@ def transform_to_thai(recipe_data):
         # add in coconut milk / fish sauce
         recipe_data['ingredients'].append({'name': 'coconut milk', 'quantity': 6, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
         recipe_data['ingredients'].append({'name': 'fish sauce', 'quantity': 2.5, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
-    
-    # check if thai spices in
-    for spice in THAI_SPICES:
-        # add if in not ingredients
-        if spice not in input_ingredients:
-            recipe_data['ingredients'].append({'name': spice, 'quantity': None, 'measurement': None, 'descriptor': None, 'preparation': None})
             
     # edit steps in recipe to account for thai transform
     directions_text = list(map(lambda s: s['text'], recipe_data['directions']))
@@ -214,13 +208,11 @@ def transform_to_thai(recipe_data):
         if any(map(lambda action: action in directions_text[i], cook_actions)):
             # print('cooking occurs', directions_text[i])
             # always peppers and galangals
-            recipe_data['directions'][i]['ingredients'].append({'name': 'chili pepper', 'quantity': 0.25, 'measurement': 'cup', 'descriptor': None, 'preparation': None})
-            recipe_data['directions'][i]['ingredients'].append({'name': 'galangal', 'quantity': 0.5, 'measurement': 'cup', 'descriptor': None, 'preparation': 'shredded'})
+            recipe_data['directions'][i]['ingredients'] += ['chili pepper', 'galangal']
             
             if is_pasta_rice_soup:
                 # add in coconut milk / fish sauce step
-                recipe_data['directions'][i]['ingredients'].append({'name': 'coconut milk', 'quantity': 6, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
-                recipe_data['directions'][i]['ingredients'].append({'name': 'fish sauce', 'quantity': 2.5, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
+                recipe_data['directions'][i]['ingredients'] += ['fish sauce', 'coconut milk']
                 recipe_data['directions'][i]['text'] += ' In addition, blend in chili peppers, galangals, coconut milk, and fish sauce.'
             else:
                 # just add thai peppers in
@@ -233,6 +225,8 @@ def transform_to_thai(recipe_data):
     for ingredient in input_ingredients:
         if any(map(lambda spice: spice in ingredient, THAI_SPICES)):
             spiced = True
+            
+    # print(spiced)
             
     if not spiced:
         # add in spicing as last step, choose random spice
