@@ -1,3 +1,5 @@
+import random
+
 THAI_INDICATORS = ['coconut milk', 'fish sauce', 'chili pepper', 'galangal', 'curry']
 # all found pasta types on https://en.wikipedia.org/wiki/List_of_pasta
 THAI_SPICES = ['lemongrass', 'basil']
@@ -176,8 +178,9 @@ def transform_to_thai(recipe_data):
     input_ingredients = list(map(lambda i: i['name'], recipe_data['ingredients']))
     is_pasta_rice_soup = False
     
-    # add thai peppers for all recipes
-    recipe_data['ingredients'].append({'name': 'chili pepper', 'quantity': 0.25, 'measurement': 'cup', 'descriptor': None, 'preparation': None})
+    # add thai peppers and galangals for all recipes
+    recipe_data['ingredients'].append({'name': 'chili pepper', 'quantity': 0.25, 'measurement': 'cup', 'descriptor': None, 'preparation': 'shredded'})
+    recipe_data['ingredients'].append({'name': 'galangal', 'quantity': 0.5, 'measurement': 'cup', 'descriptor': None, 'preparation': 'shredded'})
     
     # add sauces - coconut milk / fish sauce if dish is rice, a pasta, or soup
     for ig in input_ingredients:
@@ -188,31 +191,51 @@ def transform_to_thai(recipe_data):
         is_pasta_rice_soup = True
     
     if is_pasta_rice_soup:
-        print('this is pasta rice soup')
+        # print('this is pasta rice soup')
         # add in coconut milk / fish sauce
         recipe_data['ingredients'].append({'name': 'coconut milk', 'quantity': 6, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
         recipe_data['ingredients'].append({'name': 'fish sauce', 'quantity': 2.5, 'measurement': 'teaspoon', 'descriptor': None, 'preparation': None})
-    
-    # check if thai spices in
-    for spice in THAI_SPICES:
-        # add if in not ingredients
-        if spice not in input_ingredients:
-            recipe_data['ingredients'].append({'name': spice, 'quantity': None, 'measurement': None, 'descriptor': None, 'preparation': None})
             
     # edit steps in recipe to account for thai transform
     directions_text = list(map(lambda s: s['text'], recipe_data['directions']))
     
     cook_actions = ['blend', 'mix', 'stir']
+    added_step = False
     for i in range(len(directions_text)):
+        if added_step:
+            break
         # check if step involves any blend, mix, or stir to add in thai essentials
         if any(map(lambda action: action in directions_text[i], cook_actions)):
-            print('cooking occurs', directions_text[i])
+            # print('cooking occurs', directions_text[i])
+            # always peppers and galangals
+            recipe_data['directions'][i]['ingredients'] += ['chili pepper', 'galangal']
+            
             if is_pasta_rice_soup:
                 # add in coconut milk / fish sauce step
-                pass
+                recipe_data['directions'][i]['ingredients'] += ['fish sauce', 'coconut milk']
+                recipe_data['directions'][i]['text'] += ' In addition, blend in chili peppers, galangals, coconut milk, and fish sauce.'
             else:
                 # just add thai peppers in
-                pass
+                recipe_data['directions'][i]['text'] += ' In addition, blend in chili peppers and galangals.'
+            
+            added_step = True
+    
+    spiced = False
+    # confirm if spiced with thai
+    for ingredient in input_ingredients:
+        if any(map(lambda spice: spice in ingredient, THAI_SPICES)):
+            spiced = True
+            
+    # print(spiced)
+            
+    if not spiced:
+        # add in spicing as last step, choose random spice
+        chosen_one = random.choice(THAI_SPICES)
+        # add spice to ingredients
+        recipe_data['ingredients'].append({'name': chosen_one, 'quantity': 0.5, 'measurement': 'cup', 'descriptor': None, 'preparation': 'shredded'})
+        # add in last step
+        recipe_data['directions'].append({'text': 'Sprinkle the shredded ' + chosen_one + ' above the dish and enjoy.', 
+        'ingredients': [chosen_one], 'tools': [], 'methods': ['Sprinkle'], 'times': []})
             
     return recipe_data
     
@@ -244,5 +267,5 @@ if __name__ == '__main__':
         {'text': 'Bake in the preheated oven until the casserole is bubbling and the cheese has melted, about 30 minutes. Remove foil and bake until cheese has begun to brown, about 10 more minutes. Allow to stand at least 10 minutes before serving.', 
         'ingredients': ['cheese'], 'tools': ['oven', 'foil'], 'methods': ['Bake', 'bake'], 'times': ['30 minutes', '10 more minutes', '10 minutes']}],
     }
-    
-    print(transform_to_thai(sample_recipe))
+    import json
+    print(json.dumps(transform_to_thai(sample_recipe)))
