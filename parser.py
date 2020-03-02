@@ -37,7 +37,7 @@ def parse_ingredients(ingredients):
                 break
         if '/' in quantity:
             fraction_obj = sum(map(fractions.Fraction, quantity.split()))
-            ingredient_info['quantity'] = float(fraction_obj)
+            ingredient_info['quantity'] = round(float(fraction_obj), 2)
             name = name.replace(quantity + ' ', '')
         elif len(quantity) > 0:
             ingredient_info['quantity'] = float(quantity)

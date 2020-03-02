@@ -1,10 +1,12 @@
+import fetcher
+import parser
 from transforms import double_or_half
-from transforms import healthy_transformation
+from transforms import healthy_transform
 from transforms import to_thai_cuisine
-from transforms import vegetarian_transformation
+from transforms import vegetarian_transform
 
 def output_recipe(recipe_data):
-    print('Ingredients')
+    print('\nIngredients')
     for ingredient in recipe_data['ingredients']:
         s = ' -'
         if ingredient['quantity']:
@@ -41,7 +43,31 @@ def output_recipe(recipe_data):
         print(s)
 
 def main():
-    pass
+    url = input('Input URL: ')
+    rf = fetcher.RecipeFetcher()
+    recipe_data = parser.parse_recipe(rf.scrape_recipe(url))
+    options = '\nOptions:\n1 To vegetarian\n2 From vegetarian\n3 To healthy\n4 From healthy\n5 Double the amount\n6 Cut it by half\n7 To Thai style\n8 To Japanese style\n9 Exit\nInput your choice (a number): '
+    output_recipe(recipe_data)
+    choice = input(options)
+    while choice != '9':
+        if choice == '1':
+            recipe_data = vegetarian_transform.to_vegetarian(recipe_data)
+        elif choice == '2':
+            recipe_data = vegetarian_transform.from_vegetarian(recipe_data)
+        elif choice == '3':
+            recipe_data = healthy_transform.to_healthy(recipe_data)
+        elif choice == '4':
+            recipe_data = healthy_transform.from_healthy(recipe_data)
+        elif choice == '5':
+            recipe_data = double_or_half.transform_amount(recipe_data, 'double')
+        elif choice == '6':
+            recipe_data = double_or_half.transform_amount(recipe_data, 'half')
+        elif choice == '7':
+            recipe_data = to_thai_cuisine.transform_to_thai(recipe_data)
+        elif choice == '8':
+            pass
+        output_recipe(recipe_data)
+        choice = input(options)
 
 
 if __name__ == '__main__':    
@@ -93,3 +119,4 @@ if __name__ == '__main__':
     }
 
     # output_recipe(example)
+    main()

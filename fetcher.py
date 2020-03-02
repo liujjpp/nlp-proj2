@@ -18,6 +18,10 @@ class RecipeFetcher:
                page_graph.find_all('div', {'class':'grid-card-image-container'})]
 
     def scrape_recipe(self, recipe_url):
+        if '/?' in recipe_url:
+          i = recipe_url.index('/?')
+          recipe_url = recipe_url[:i + 1]
+          
         results = {}
 
         page_html = requests.get(recipe_url)
