@@ -2,6 +2,7 @@ import fetcher
 import parser
 from transforms import double_or_half
 from transforms import healthy_transform
+from transforms import to_japanese_cuisine
 from transforms import to_thai_cuisine
 from transforms import vegetarian_transform
 
@@ -87,7 +88,7 @@ def main():
         elif choice == '7':
             recipe_data = to_thai_cuisine.transform_to_thai(recipe_data)
         elif choice == '8':
-            pass
+            recipe_data = to_japanese_cuisine.transform_to_japanese(recipe_data)
         elif choice == '9':
             url = input('Input URL: ')
             name = get_name(url)
