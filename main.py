@@ -2,6 +2,7 @@ import fetcher
 import parser
 from transforms import double_or_half
 from transforms import healthy_transform
+from transforms import method_transform
 from transforms import to_japanese_cuisine
 from transforms import to_thai_cuisine
 from transforms import vegetarian_transform
@@ -66,13 +67,13 @@ def main():
     name = get_name(url)
     rf = fetcher.RecipeFetcher()
     recipe_data = parser.parse_recipe(rf.scrape_recipe(url))
-    options = '\nOptions:\n1 Make it vegetarian\n2 Make it un-vegetarian\n3 Make it healthier\n4 Make it less healthy\n5 Double the amount\n6 Cut it by half\n7 To Thai style\n8 To Japanese style\n9 Input a new URL\n10 Print internal representation\n11 Exit\nInput your choice (a number): '
+    options = '\nOptions:\n1 Make it vegetarian\n2 Make it un-vegetarian\n3 Make it healthier\n4 Make it less healthy\n5 Double the amount\n6 Cut it by half\n7 To Thai style\n8 To Japanese style\n9 Change cooking method\n10 Input a new URL\n11 Print internal representation\n12 Exit\nInput your choice (a number): '
     print('====================')
     print(name)
     output_recipe(recipe_data)
     print('====================')
     choice = input(options)
-    while choice != '11':
+    while choice != '12':
         if choice == '1':
             recipe_data = vegetarian_transform.to_vegetarian(recipe_data)
         elif choice == '2':
@@ -90,10 +91,14 @@ def main():
         elif choice == '8':
             recipe_data = to_japanese_cuisine.transform_to_japanese(recipe_data)
         elif choice == '9':
+            old_method = input('From (enter a method, e.g. bake): ')
+            new_method = input('To (enter a method, e.g. fry): ')
+            recipe_data = method_transform.to_new_method(recipe_data, old_method, new_method)
+        elif choice == '10':
             url = input('Input URL: ')
             name = get_name(url)
             recipe_data = parser.parse_recipe(rf.scrape_recipe(url))
-        elif choice == '10':
+        elif choice == '11':
             print(recipe_data)
             choice = input(options)
             continue
