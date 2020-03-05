@@ -4,7 +4,7 @@ def transform_to_japanese(recipe_data):
     ingredients = []
     for ingredient in recipe_data['ingredients']:
         new_ingredient = dict(ingredient)
-        if 'sauce' in new_ingredient['name']:
+        if 'sauce' in new_ingredient['name'] and not 'soy' in new_ingredient['name']:
             new_ingredient['name'] = 'teriyaki sauce'
         elif 'cheese' in new_ingredient['name']:
             new_ingredient['name'] = 'Sakura cheese'
@@ -20,7 +20,7 @@ def transform_to_japanese(recipe_data):
         new_direction = dict(direction)
         new_ingredients = []
         for ingredient in new_direction['ingredients']:
-            if 'sauce' in ingredient:
+            if 'sauce' in ingredient and not 'soy' in ingredient:
                 new_direction['text'] = new_direction['text'].replace(ingredient, 'teriyaki sauce')
                 new_ingredients.append('teriyaki sauce')
             elif 'cheese' in ingredient:

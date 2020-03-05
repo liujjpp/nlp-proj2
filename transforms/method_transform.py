@@ -14,15 +14,10 @@ def to_new_method(recipe_data, old_method, new_method):
         directions = []
         for direction in recipe_data['directions']:
             new_direction = dict(direction)
-            for method in new_direction['methods']:
-                if method == old_method:
-                    new_direction['text'] = new_direction['text'].replace(method, new_method)
-                    directions.append(new_method)
-                elif method.lower() == old_method:
-                    new_direction['text'] = new_direction['text'].replace(method, new_method.capitalize())
-                    directions.append(new_method.capitalize())
-                else:
-                    directions.append(method)
+            if old_method in new_direction['text']:
+                new_direction['text'] = new_direction['text'].replace(old_method, new_method)
+            elif old_method.capitalize() in new_direction['text']:
+                new_direction['text'] = new_direction['text'].replace(old_method.capitalize(), new_method.capitalize())
             directions.append(new_direction)
         results['directions'] = directions
         results['nutrition'] = recipe_data['nutrition']
@@ -31,21 +26,21 @@ def to_new_method(recipe_data, old_method, new_method):
     directions = []
     for direction in recipe_data['directions']:
         new_direction = dict(direction)
+        new_methods = []
         for method in new_direction['methods']:
             if method == old_method:
                 new_direction['text'] = new_direction['text'].replace(method, new_method)
-                directions.append(new_method)
+                new_methods.append(new_method)
             elif method.lower() == old_method:
                 new_direction['text'] = new_direction['text'].replace(method, new_method.capitalize())
-                directions.append(new_method.capitalize())
+                new_methods.append(new_method.capitalize())
             elif method == method_dict[old_method]:
                 new_direction['text'] = new_direction['text'].replace(method, method_dict[new_method])
-                directions.append(method_dict[new_method])
+                new_methods.append(method_dict[new_method])
             elif method.lower() == method_dict[old_method]:
                 new_direction['text'] = new_direction['text'].replace(method, method_dict[new_method].capitalize())
-                directions.append(method_dict[new_method].capitalize())
-            else:
-                directions.append(method)
+                new_methods.append(method_dict[new_method].capitalize())
+        new_direction['methods'] = new_methods
         directions.append(new_direction)
     results['directions'] = directions
 

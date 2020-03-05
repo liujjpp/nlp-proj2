@@ -84,13 +84,18 @@ def parse_ingredients(ingredients):
             ingredient_info['descriptor'] = None
 
         preparation = ''
+        preparation_list = []
         for p in knowledge['preparation']:
-            if p in words:
-                preparation = p
-                break
+            if p in ingredient:
+                preparation_list.append(p)
+                if preparation == '':
+                    preparation = p
+                else:
+                    preparation = preparation + ', ' + p
         if len(preparation) > 0:
             ingredient_info['preparation'] = preparation
-            name = name.replace(preparation, '')
+            for p in preparation_list:
+                name = name.replace(p, '')
         else:
             ingredient_info['preparation'] = None
 
@@ -100,6 +105,8 @@ def parse_ingredients(ingredients):
         if ' or ' in name:
             i = name.find(' or ')
             name = name[:i]
+        if ' - ' in name:
+            name = name.replace(' - ', ' ')
         if 'to taste' in name:
             name = name.replace('to taste', '')
         name = ' '.join(name.split())

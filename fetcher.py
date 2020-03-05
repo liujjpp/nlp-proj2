@@ -51,15 +51,18 @@ class RecipeFetcher:
 
             nutrient_info = nutrient_row.text.split()
             if nutrient_info[-1] == '%':
-              nutrient['name'] = ' '.join(nutrient_info[:-3])[:-1]
+              dv_len = 2
+              if '>' in nutrient_row.text or '<' in nutrient_row.text:
+                dv_len = 3
+              nutrient['name'] = ' '.join(nutrient_info[:-(dv_len + 1)])[:-1]
               first_index = -1
-              for i in range(len(nutrient_info[-3])):
-                if ord(nutrient_info[-3][i]) > 57:
+              for i in range(len(nutrient_info[-(dv_len + 1)])):
+                if ord(nutrient_info[-(dv_len + 1)][i]) > 57:
                   first_index = i
                   break
-              nutrient['amount'] = nutrient_info[-3][:first_index]
-              nutrient['unit'] = nutrient_info[-3][first_index:]
-              nutrient['daily_value'] = ' '.join(nutrient_info[-2:])
+              nutrient['amount'] = nutrient_info[-(dv_len + 1)][:first_index]
+              nutrient['unit'] = nutrient_info[-(dv_len + 1)][first_index:]
+              nutrient['daily_value'] = ' '.join(nutrient_info[-dv_len:])
             else:
               nutrient['name'] = ' '.join(nutrient_info[:-1])[:-1]
               first_index = -1

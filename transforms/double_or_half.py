@@ -46,7 +46,9 @@ def transform_amount(recipe_data, version):
         new_nutrition['amount'] = str(multiple * float(n['amount']))
         if n['daily_value']:
             daily_value = n['daily_value'].split()
-            new_nutrition['daily_value'] = str(multiple * float(daily_value[0])) + ' %'
+            new_nutrition['daily_value'] = str(multiple * float(daily_value[-2])) + ' %'
+            if len(daily_value) > 2:
+                new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
         nutrition.append(new_nutrition)
     results['nutrition'] = nutrition
 

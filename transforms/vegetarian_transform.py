@@ -45,7 +45,7 @@ def to_vegetarian(recipe_data):
         directions.append(new_direction)
     results['directions'] = directions
 
-    if count < 3:
+    if count < 1:
         results['nutrition'] = recipe_data['nutrition']
     else:
         nutrition = []
@@ -55,22 +55,30 @@ def to_vegetarian(recipe_data):
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 0.8, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 0.8, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 0.8, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             elif 'Cholesterol' in new_nutrition['name']:
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 0.2, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 0.2, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 0.2, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             elif 'Fiber' in new_nutrition['name']:
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 2, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 2, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 2, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             elif 'Carbohydrates' in new_nutrition['name']:
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 1.15, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 1.15, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 1.15, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             nutrition.append(new_nutrition)
         results['nutrition'] = nutrition
 
@@ -121,7 +129,7 @@ def from_vegetarian(recipe_data):
         directions.append(new_direction)
     results['directions'] = directions
 
-    if count < 3:
+    if count < 1:
         results['nutrition'] = recipe_data['nutrition']
     else:
         nutrition = []
@@ -131,22 +139,30 @@ def from_vegetarian(recipe_data):
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 1.25, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 1.25, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 1.25, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             elif 'Cholesterol' in new_nutrition['name']:
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 5, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 5, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 5, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             elif 'Fiber' in new_nutrition['name']:
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 0.5, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 0.5, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 0.5, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             elif 'Carbohydrates' in new_nutrition['name']:
                 new_nutrition['amount'] = str(round(float(new_nutrition['amount']) * 0.87, 2))
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(round(float(daily_value[0]) * 0.87, 2)) + ' %'
+                    new_nutrition['daily_value'] = str(round(float(daily_value[-2]) * 0.87, 2)) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             nutrition.append(new_nutrition)
         results['nutrition'] = nutrition
 

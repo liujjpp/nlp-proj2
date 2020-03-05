@@ -62,7 +62,9 @@ def to_healthy(recipe_data):
                 new_nutrition['amount'] = str(float(new_nutrition['amount']) / 2)
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(float(daily_value[0]) / 2) + ' %'
+                    new_nutrition['daily_value'] = str(float(daily_value[-2]) / 2) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             nutrition.append(new_nutrition)
         results['nutrition'] = nutrition
 
@@ -122,7 +124,9 @@ def from_healthy(recipe_data):
                 new_nutrition['amount'] = str(float(new_nutrition['amount']) * 2)
                 if new_nutrition['daily_value']:
                     daily_value = new_nutrition['daily_value'].split()
-                    new_nutrition['daily_value'] = str(float(daily_value[0]) * 2) + ' %'
+                    new_nutrition['daily_value'] = str(float(daily_value[-2]) * 2) + ' %'
+                    if len(daily_value) > 2:
+                        new_nutrition['daily_value'] = daily_value[0] + ' ' + new_nutrition['daily_value']
             nutrition.append(new_nutrition)
         results['nutrition'] = nutrition
 
