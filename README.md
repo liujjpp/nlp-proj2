@@ -48,3 +48,8 @@ $ venv\bin\activate
 ```shell
 $ pip install -r requirements.txt
 ```
+
+### Run
+```bash
+$ python main.py
+```
